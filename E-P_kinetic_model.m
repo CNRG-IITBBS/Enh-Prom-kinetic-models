@@ -1,38 +1,30 @@
 clear all;
 
 %%% Parameters %%%%%%%%
-%num_enhancers = 55;
-%num_molecules = num_enhancers + 2;
-
-%slopes = [0.95, 0.99];
 f = 1.0;
 RC_values = 5.0;
-%r = 0.8;
-%g = 0.8;
-%ma = 1.05;
-%mr = 100.5;
-enhancers=7;
+enhancers=20;
 for RC=RC_values
     for num_enhancers = enhancers
         num_molecules = num_enhancers + 2;
-        slopes_1_values = 0.9;
+        slopes_1_values = 0.99;
         slopes_2_values = 1.01;
-        %slopes_2_values = [0.89,0.9,0.95,0.99,0.999,1.001,1.01,1.05,1.1,1.5];
+       
         
         for s1 = slopes_1_values
             for s2 = slopes_2_values
                 slopes(1) = s1;
                 slopes(2) = s2;
                 r_values = 0.5;
-                g_values = 0.375;
+                g_values = 0.5;
                 for r = r_values
                     for g = g_values
-                        ma_values =5.5;
+                        ma_values =5.0;
                         for ma = ma_values
-                            mr_values = 2.8;
+                            mr_values = 5.0;
                             for mr = mr_values
-                                for s = 1:1
-                                    runs = 100000;
+                                for s = 1:20
+                                    runs = 1000000;
     
                                     %%% Defining state %%%%
                                     enh = zeros(3, num_molecules);
@@ -48,8 +40,8 @@ for RC=RC_values
     
                                     enh(2, 2) = 1; % Initial state
                                     time = 0;
-                                    %fileID1 = fopen('enhancers_matrix.txt', 'w');
-                                    fileID2 = fopen(sprintf('enh_num_%d_r_%.5f_g_%.5f_s1_%.3f_s2_%.3f_ma_%.2f_mr_%.2f_AC5_t%d.txt', num_enhancers, r, g, slopes(1), slopes(2), ma, mr, s), 'w');
+                                   % fileID1 = fopen(sprintf('enhancers_matrix_%d_r_%.5f_g_%.5f_s1_%.3f_s2_%.3f_ma_%.2f_mr_%.2f_RC_%.2f_AC5_t%d.txt',num_enhancers, r, g, slopes(1), slopes(2), ma, mr,RC, s), 'w');
+                                    fileID2 = fopen(sprintf('enh_num_%d_r_%.5f_g_%.5f_s1_%.3f_s2_%.3f_ma_%.2f_mr_%.2f_RC_%.2f_AC5_t%d.txt', num_enhancers, r, g, slopes(1), slopes(2), ma, mr,RC, s), 'w');
                                     %fileID2=fopen('cluster.txt','w');
                                     %fileID2 = fopen(sprintf('enh_num_%d_s1_%d_s2_%d_ma_%d_mr_%d_AC_100_t%d.txt', num_enhancers,slopes(1),slopes(2),ma,mr,s), 'w');
                                     avg_col = 0.0;
@@ -120,12 +112,12 @@ for RC=RC_values
                                         end
                                         
                                         % Logging the state
-    %                                       fprintf(fileID1, 'Step %f:\n', time);
-    %                                       for row = 1:size(enh, 1)
-    %                                           fprintf(fileID1, '%f ', enh(row, :));
-    %                                           fprintf(fileID1, '\n');
-    %                                       end
-    %                                       fprintf(fileID1, '\n');
+                                        %   fprintf(fileID1, 'Step %f:\n', time);
+                                        %  for row = 1:size(enh, 1)
+                                        %      fprintf(fileID1, '%f ', enh(row, :));
+                                        %     fprintf(fileID1, '\n');
+                                        %  end
+                                        % fprintf(fileID1, '\n');
     
     
                                         fprintf(fileID2, '%f %f %f %d\n', time, AC, t, col-1);
@@ -201,7 +193,7 @@ function AC = rect(i)
     off = 0.0; 
 
     % Each "on" and "off" state has a width of 0.1 * T
-    width1=1.0;
+    width1=0.5;
     width = width1 * T;
     num_stages = 1/width1;  % Total number of stages (5 "on" and 5 "off")
 
@@ -215,7 +207,7 @@ function AC = rect(i)
     stage = floor(position_in_cycle / width) + 1;
 
     % Alternate between "on" and "off" states
-    if mod(stage, 2) == 1
+    if mod(stage, 2) == 0
         AC = on;  % "On" state for odd stages
     else
         AC = off; % "Off" state for even stages
